@@ -1,22 +1,35 @@
 public class Person {
-    private String name;
+    private String firstname;
+    private String lastname;
 
-    public Person(String name) {
-        this.name = name;
+    public Person(String firstname, String lastname) {
+        this.firstname = firstname;
+        this.lastname = lastname;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstname;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getLastName() {
+        return lastname;
     }
+
+
+    public void setFirstName(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastName(String lastname) {
+        this.lastname = lastname;
+    }
+
+
 
     @Override
     public String toString() {
-        return "Person{" +
-                ", name='" + name + '\'' +
+        return "Person{" + "firstname" + firstname +
+                ", lastname='" + lastname + '\'' +
                 '}';
     }
 }

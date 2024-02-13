@@ -37,9 +37,11 @@ public class Main {
         System.out.print("[P]erson or [B]ook?> ");
         String action = scanner.next();
         if (action.equalsIgnoreCase("P")) {
-            System.out.print("Enter Name> ");
-            String name = scanner.next();
-            Person person = new Person(name);
+            System.out.print("Enter First Name> ");
+            String firstname = scanner.next();
+            System.out.print("Enter Last Name> ");
+            String lastname = scanner.next();
+            Person person = new Person(firstname, lastname);
             insertPerson(connection, person);
         } else if (action.equalsIgnoreCase("B")) {
             System.out.print("Enter Author Name> ");
@@ -87,9 +89,10 @@ public class Main {
     }
 
     public static int insertPerson(Connection connection, Person person) throws SQLException {
-        String sql = "INSERT INTO person(name) VALUES(?)";
+        String sql = "INSERT INTO person(firstname, lastname) VALUES(?,?)";
         try (var pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, person.getName());
+            pstmt.setString(1, person.getFirstName());
+            pstmt.setString(2, person.getLastName());
             int insertedRow = pstmt.executeUpdate();
             if (insertedRow > 0) {
                 var rs = pstmt.getGeneratedKeys();
