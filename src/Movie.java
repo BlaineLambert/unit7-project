@@ -1,11 +1,11 @@
-public class Book {
+public class Movie {
     private String name;
-    private String author;
+    private String director;
     private double price;
 
-    public Book(String name, String author, double price) {
+    public Movie(String name, String director, double price) {
         this.name = name;
-        this.author = author;
+        this.director = director;
         this.price = price;
     }
 
@@ -17,27 +17,27 @@ public class Book {
         this.name = name;
     }
 
-    public String getAuthor() {
-        return author;
+    public String getDirector() {
+        return director;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setDirector(String director) {
+        this.director = director;
     }
 
-    public double getPrice() { // Getter for price
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) { // Setter for price
+    public void setPrice(double price) {
         this.price = price;
     }
 
     @Override
     public String toString() {
-        return "Book{" +
+        return "Movie{" +
                 "name='" + name + '\'' +
-                ", author='" + author + '\'' +
+                ", director='" + director + '\'' +
                 ", price=" + price +
                 '}';
     }
