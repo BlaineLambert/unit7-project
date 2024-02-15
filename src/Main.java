@@ -23,6 +23,8 @@ public class Main {
                         checkInAction(scanner, connection);
                     } else if (action.equalsIgnoreCase("O")) {
                         checkOutAction(scanner, connection);
+                    } else if (action.equalsIgnoreCase("V")) {
+                        view(connection, scanner);
                     } else {
                         System.out.println("Invalid option. Please choose again.");
                     }
@@ -70,7 +72,7 @@ public class Main {
 
 
     private static void deleteAction(Scanner scanner, Connection connection) throws SQLException {
-        System.out.print("[P]erson or [B]ook?> ");
+        System.out.print("[P]erson, [B]ook, or [M]ovie?> ");
         String action = scanner.next();
         if (action.equalsIgnoreCase("P")) {
             System.out.print("Enter Person ID to delete> ");
@@ -90,6 +92,10 @@ public class Main {
             } else {
                 System.out.println("Book not found or deletion failed.");
             }
+        } else if (action.equalsIgnoreCase("M")) {
+            System.out.print("Enter Movie ID to delete> ");
+            int movieId = getIntInput(scanner);
+            int deletedRows = deleteMovie(connection, movieId);
         }
     }
 
@@ -377,6 +383,7 @@ public class Main {
     }
 
     private static void listCheckedOutBooks(Connection connection, int personId) throws SQLException {
+        System.out.println("test");
         String sql = "SELECT b.id, b.name FROM book b JOIN person_books pb ON b.id = pb.book_id WHERE pb.person_id = ? AND pb.return_date IS NULL";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, personId);
@@ -399,6 +406,75 @@ public class Main {
                 System.out.println("ID: " + rs.getInt("id") + ", Movie Name: " + rs.getString("name"));
             }
         }
+
     }
 
+    private static void view(Connection connection, Scanner scanner) throws SQLException {
+        System.out.println("[P]erson, [B]ooks, [M]ovies, Checked Out Books[cb], or Checked Out Movies[cm]> ");
+        String action = scanner.next();
+        if (action.equalsIgnoreCase("P")) {
+            viewAllPerson(connection);
+        } else if (action.equalsIgnoreCase("B")) {
+            viewAllBooks(connection);
+        } else if (action.equalsIgnoreCase("M")) {
+            viewAllMovie(connection);
+        } else if (action.equalsIgnoreCase("CB")) {
+            viewAllCheckedOutBooks(connection);
+        } else if (action.equalsIgnoreCase("CM")) {
+            viewAllCheckedOutMovies(connection);
+        } else {
+            System.out.println("Invalid Action.");
+        }
+    }
+
+    private static void viewAllPerson(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM person";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") + ", First Name: " + rs.getString("firstname") + ", Last Name: " + rs.getString("lastname"));
+            }
+        }
+
+    }
+
+    private static void viewAllBooks(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM book";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") + ", Author: " + rs.getString("author") + ", Name: " + rs.getString("name") + ", Price: " + rs.getInt("price"));
+            }
+        }
+    }
+
+    private static void viewAllMovie(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM movie";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") + ", Name: " + rs.getString("name") + ", Price: " + rs.getInt("price"));
+            }
+        }
+    }
+
+    private static void viewAllCheckedOutBooks(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM person_books";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                System.out.println("Person ID: " + rs.getInt("person_id") + ", Book ID: " + rs.getInt("book_id") + ", Checked Out: " + rs.getString("checkout_date"));
+            }
+        }
+    }
+
+    private static void viewAllCheckedOutMovies(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM person_movies";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                System.out.println("Person ID: " + rs.getInt("person_id") + ", Movie ID: " + rs.getInt("movie_id") + ", Checked Out: " + rs.getString("checkout_date"));
+            }
+        }
+    }
 }
