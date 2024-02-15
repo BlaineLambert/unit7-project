@@ -3,11 +3,12 @@ public class Person {
     private String lastname;
     private String phonenumber;
 
-    public Person(String firstname, String lastname) {
+    public Person(String firstname, String lastname, String phonenumber) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.phonenumber = phonenumber;
     }
+
 
     public String getFirstName() {
         return firstname;

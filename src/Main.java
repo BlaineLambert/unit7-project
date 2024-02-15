@@ -13,7 +13,7 @@ public class Main {
             if (connection != null) {
                 String action = "";
                 while (!action.equalsIgnoreCase("quit")) {
-                    System.out.print("[V]iew, [A]dd, [D]elete, Check [I]n, or Check [O]ut> ");
+                    System.out.print("[V]iew, [A]dd, [D]elete, Check [I]n, Check [O]ut, or [S]earch> ");
                     action = scanner.next();
                     if (action.equalsIgnoreCase("A")) {
                         addAction(scanner, connection);
@@ -25,6 +25,8 @@ public class Main {
                         checkOutAction(scanner, connection);
                     } else if (action.equalsIgnoreCase("V")) {
                         view(connection, scanner);
+                    } else if (action.equalsIgnoreCase("S")) {
+                        searchAction(scanner, connection);
                     } else {
                         System.out.println("Invalid option. Please choose again.");
                     }
@@ -37,6 +39,57 @@ public class Main {
         }
     }
 
+    private static void searchAction(Scanner scanner, Connection connection) throws SQLException {
+        System.out.print("Enter search keyword: ");
+        String keyword = scanner.next();
+        System.out.println("Searching for: " + keyword);
+        searchBooks(connection, keyword);
+        searchPeople(connection, keyword);
+        searchMovies(connection, keyword);
+    }
+
+    private static void searchBooks(Connection connection, String keyword) throws SQLException {
+        String sql = "SELECT * FROM book WHERE name LIKE ? OR author LIKE ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + keyword + "%");
+            pstmt.setString(2, "%" + keyword + "%");
+            ResultSet rs = pstmt.executeQuery();
+            System.out.println("Books matching the search:");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") + ", Author: " + rs.getString("author") +
+                        ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
+            }
+        }
+    }
+
+    private static void searchPeople(Connection connection, String keyword) throws SQLException {
+        String sql = "SELECT * FROM person WHERE firstname LIKE ? OR lastname LIKE ? OR phonenumber LIKE ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + keyword + "%");
+            pstmt.setString(2, "%" + keyword + "%");
+            pstmt.setString(3, "%" + keyword + "%");
+            ResultSet rs = pstmt.executeQuery();
+            System.out.println("People matching the search:");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") + ", First Name: " + rs.getString("firstname") +
+                        ", Last Name: " + rs.getString("lastname") + ", Phone Number: " + rs.getString("phonenumber"));
+            }
+        }
+    }
+
+    private static void searchMovies(Connection connection, String keyword) throws SQLException {
+        String sql = "SELECT * FROM movie WHERE name LIKE ? OR director LIKE ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + keyword + "%");
+            pstmt.setString(2, "%" + keyword + "%");
+            ResultSet rs = pstmt.executeQuery();
+            System.out.println("Movies matching the search:");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") +
+                        ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
+            }
+        }
+    }
 
     private static void addAction(Scanner scanner, Connection connection) throws SQLException {
         System.out.print("[P]erson, [B]ook, or [M]ovie?> ");
