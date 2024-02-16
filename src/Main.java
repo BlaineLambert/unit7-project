@@ -436,7 +436,6 @@ public class Main {
     }
 
     private static void listCheckedOutBooks(Connection connection, int personId) throws SQLException {
-        System.out.println("test");
         String sql = "SELECT b.id, b.name FROM book b JOIN person_books pb ON b.id = pb.book_id WHERE pb.person_id = ? AND pb.return_date IS NULL";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, personId);
@@ -463,7 +462,7 @@ public class Main {
     }
 
     private static void view(Connection connection, Scanner scanner) throws SQLException {
-        System.out.println("[P]erson, [B]ooks, [M]ovies, Checked Out Books[cb], or Checked Out Movies[cm]> ");
+        System.out.println("[P]erson, [B]ooks, [M]ovies, Available Books [ab], Available Movies [am] Checked Out Books [cb], or Checked Out Movies [cm]> ");
         String action = scanner.next();
         if (action.equalsIgnoreCase("P")) {
             viewAllPerson(connection);
@@ -471,6 +470,10 @@ public class Main {
             viewAllBooks(connection);
         } else if (action.equalsIgnoreCase("M")) {
             viewAllMovie(connection);
+        } else if (action.equalsIgnoreCase("AB")) {
+            viewAvailableBooks(connection);
+        } else if (action.equalsIgnoreCase("AM")) {
+            viewAvailableMovies(connection);
         } else if (action.equalsIgnoreCase("CB")) {
             viewAllCheckedOutBooks(connection);
         } else if (action.equalsIgnoreCase("CM")) {
@@ -489,6 +492,30 @@ public class Main {
             }
         }
 
+    }
+
+    private static void viewAvailableBooks(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM book WHERE id NOT IN (SELECT book_id FROM person_books WHERE return_date IS NULL)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            System.out.println("Available Books:");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") + ", Author: " + rs.getString("author") +
+                        ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
+            }
+        }
+    }
+
+    private static void viewAvailableMovies(Connection connection) throws SQLException {
+        String sql = "SELECT * FROM movie WHERE id NOT IN (SELECT movie_id FROM person_movies WHERE return_date IS NULL)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            System.out.println("Available Movies:");
+            while (rs.next()) {
+                System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") +
+                        ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
+            }
+        }
     }
 
     private static void viewAllBooks(Connection connection) throws SQLException {
