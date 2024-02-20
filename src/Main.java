@@ -40,12 +40,27 @@ public class Main {
     }
 
     private static void searchAction(Scanner scanner, Connection connection) throws SQLException {
-        System.out.print("Enter search keyword: ");
-        String keyword = scanner.next();
-        System.out.println("Searching for: " + keyword);
-        searchBooks(connection, keyword);
-        searchPeople(connection, keyword);
-        searchMovies(connection, keyword);
+        System.out.print("Would you like to search [B]ooks, [M]ovies, or [P]eople?> ");
+        String action = scanner.next();
+        if (action.equalsIgnoreCase("B")){
+            System.out.print("Enter search keyword: ");
+            String keyword = scanner.next();
+            System.out.println("Searching for: " + keyword);
+            searchBooks(connection, keyword);
+        } else if (action.equalsIgnoreCase("M")) {
+            System.out.print("Enter search keyword: ");
+            String keyword = scanner.next();
+            System.out.println("Searching for: " + keyword);
+            searchMovies(connection, keyword);
+        } else if (action.equalsIgnoreCase("P")) {
+            System.out.print("Enter search keyword: ");
+            String keyword = scanner.next();
+            System.out.println("Searching for: " + keyword);
+            searchPeople(connection, keyword);
+        } else {
+            System.out.println("Invalid Input");
+        }
+
     }
 
     private static void searchBooks(Connection connection, String keyword) throws SQLException {
