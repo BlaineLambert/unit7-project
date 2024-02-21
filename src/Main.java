@@ -13,8 +13,8 @@ public class Main {
             if (connection != null) {
                 String action = "";
                 while (!action.equalsIgnoreCase("quit")) {
-                    System.out.print("[V]iew, [A]dd, [D]elete, Check [I]n, Check [O]ut, or [S]earch> ");
-                    action = scanner.nextLine();
+                    System.out.print("\n[V]iew, [A]dd, [D]elete, Check [I]n, Check [O]ut, or [S]earch> ");
+                    action = scanner.next();
                     if (action.equalsIgnoreCase("A")) {
                         addAction(scanner, connection);
                     } if (action.equalsIgnoreCase("D")) {
