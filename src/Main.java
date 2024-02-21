@@ -14,21 +14,19 @@ public class Main {
                 String action = "";
                 while (!action.equalsIgnoreCase("quit")) {
                     System.out.print("[V]iew, [A]dd, [D]elete, Check [I]n, Check [O]ut, or [S]earch> ");
-                    action = scanner.next();
+                    action = scanner.nextLine();
                     if (action.equalsIgnoreCase("A")) {
                         addAction(scanner, connection);
-                    } else if (action.equalsIgnoreCase("D")) {
+                    } if (action.equalsIgnoreCase("D")) {
                         deleteAction(scanner, connection);
-                    } else if (action.equalsIgnoreCase("I")) {
+                    } if (action.equalsIgnoreCase("I")) {
                         checkInAction(scanner, connection);
-                    } else if (action.equalsIgnoreCase("O")) {
+                    } if (action.equalsIgnoreCase("O")) {
                         checkOutAction(scanner, connection);
-                    } else if (action.equalsIgnoreCase("V")) {
+                    } if (action.equalsIgnoreCase("V")) {
                         view(connection, scanner);
-                    } else if (action.equalsIgnoreCase("S")) {
+                    } if (action.equalsIgnoreCase("S")) {
                         searchAction(scanner, connection);
-                    } else {
-                        System.out.println("Invalid option. Please choose again.");
                     }
                 }
             } else {
@@ -40,12 +38,28 @@ public class Main {
     }
 
     private static void searchAction(Scanner scanner, Connection connection) throws SQLException {
-        System.out.print("Enter search keyword: ");
-        String keyword = scanner.next();
-        System.out.println("Searching for: " + keyword);
-        searchBooks(connection, keyword);
-        searchPeople(connection, keyword);
-        searchMovies(connection, keyword);
+        String action = "";
+        System.out.print("Would you like to search [B]ooks, [M]ovies, or [P]eople?> ");
+        action = scanner.nextLine();
+        if (action.equalsIgnoreCase("B")){
+            System.out.print("Enter search keyword: ");
+            String keyword = scanner.nextLine();
+            System.out.println("Searching for: " + keyword);
+            searchBooks(connection, keyword);
+        } else if (action.equalsIgnoreCase("M")) {
+            System.out.print("Enter search keyword: ");
+            String keyword = scanner.next();
+            System.out.println("Searching for: " + keyword);
+            searchMovies(connection, keyword);
+        } else if (action.equalsIgnoreCase("P")) {
+            System.out.print("Enter search keyword: ");
+            String keyword = scanner.next();
+            System.out.println("Searching for: " + keyword);
+            searchPeople(connection, keyword);
+        } else {
+            System.out.println("Invalid Input");
+        }
+
     }
 
     private static void searchBooks(Connection connection, String keyword) throws SQLException {
@@ -93,28 +107,28 @@ public class Main {
 
     private static void addAction(Scanner scanner, Connection connection) throws SQLException {
         System.out.print("[P]erson, [B]ook, or [M]ovie?> ");
-        String action = scanner.next();
+        String action = scanner.nextLine();
         if (action.equalsIgnoreCase("P")) {
             System.out.print("Enter First Name> ");
-            String firstname = scanner.next();
+            String firstname = scanner.nextLine();
             System.out.print("Enter Last Name> ");
-            String lastname = scanner.next();
+            String lastname = scanner.nextLine();
             System.out.print("Enter Phone Number> ");
-            String phonenumber = scanner.next();
+            String phonenumber = scanner.nextLine();
             insertPerson(connection, firstname, lastname, phonenumber);
         } else if (action.equalsIgnoreCase("B")) {
             System.out.print("Enter Author Name> ");
-            String author = scanner.next();
+            String author = scanner.nextLine();
             System.out.print("Enter Book Name> ");
-            String name = scanner.next();
+            String name = scanner.nextLine();
             System.out.print("Enter Price> ");
             double price = scanner.nextDouble();
             insertBook(connection, author, name, price);
         } else if (action.equalsIgnoreCase("M")) {
             System.out.print("Enter Director Name> ");
-            String director = scanner.next();
+            String director = scanner.nextLine();
             System.out.print("Enter Movie Name> ");
-            String name = scanner.next();
+            String name = scanner.nextLine();
             System.out.print("Enter Price> ");
             double price = scanner.nextDouble();
             insertMovie(connection, director, name, price);
@@ -126,7 +140,7 @@ public class Main {
 
     private static void deleteAction(Scanner scanner, Connection connection) throws SQLException {
         System.out.print("[P]erson, [B]ook, or [M]ovie?> ");
-        String action = scanner.next();
+        String action = scanner.nextLine();
         if (action.equalsIgnoreCase("P")) {
             System.out.print("Enter Person ID to delete> ");
             int personId = getIntInput(scanner);
@@ -157,7 +171,7 @@ public class Main {
             try {
                 return scanner.nextInt();
             } catch (InputMismatchException e) {
-                scanner.next(); // clear invalid input
+                scanner.next();
                 System.out.print("Invalid input. Please enter an integer: ");
             }
         }
@@ -173,7 +187,9 @@ public class Main {
             if (affectedRows > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
                     if (rs.next()) {
-                        return rs.getInt(1); // Return the new ID
+                        int personId = rs.getInt(1);
+                        System.out.println("Person inserted successfully with ID: " + personId);
+                        return personId;
                     }
                 }
             }
@@ -194,7 +210,7 @@ public class Main {
                     if (rs.next()) {
                         int movieId = rs.getInt(1);
                         System.out.println("Movie inserted successfully with ID: " + movieId);
-                        return movieId; // Return the new movie ID
+                        return movieId;
                     }
                 }
             }
@@ -215,7 +231,9 @@ public class Main {
             if (insertedRow > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
                     if (rs.next()) {
-                        return rs.getInt(1);
+                        int bookId = rs.getInt(1);
+                        System.out.println("Book inserted successfully with ID: " + bookId);
+                        return bookId;
                     }
                 }
             }
@@ -303,7 +321,6 @@ public class Main {
 
 
     public static void checkOutBook(Connection connection, int personId, int bookId) throws SQLException {
-        // Check if the book exists and is not already checked out
         String bookCheckSql = "SELECT COUNT(*) FROM book WHERE id = ?";
         String checkoutCheckSql = "SELECT COUNT(*) FROM person_books WHERE book_id = ? AND return_date IS NULL";
         try (
@@ -329,7 +346,6 @@ public class Main {
             }
         }
 
-        // Check if the person exists
         String personCheckSql = "SELECT COUNT(*) FROM person WHERE id = ?";
         try (PreparedStatement personCheckStmt = connection.prepareStatement(personCheckSql)) {
             personCheckStmt.setInt(1, personId);
@@ -342,7 +358,7 @@ public class Main {
             }
         }
 
-        // Perform the check-out operation
+
         String sql = "INSERT INTO person_books (person_id, book_id, checkout_date) VALUES (?, ?, CURRENT_DATE)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, personId);
@@ -353,7 +369,6 @@ public class Main {
     }
 
     public static void checkOutMovie(Connection connection, int personId, int movieId) throws SQLException {
-        // Check if the movie exists and is not already checked out
         String movieCheckSql = "SELECT COUNT(*) FROM movie WHERE id = ?";
         String checkoutCheckSql = "SELECT COUNT(*) FROM person_movies WHERE movie_id = ? AND return_date IS NULL";
         try (
@@ -379,7 +394,6 @@ public class Main {
             }
         }
 
-        // Check if the person exists
         String personCheckSql = "SELECT COUNT(*) FROM person WHERE id = ?";
         try (PreparedStatement personCheckStmt = connection.prepareStatement(personCheckSql)) {
             personCheckStmt.setInt(1, personId);
@@ -392,7 +406,7 @@ public class Main {
             }
         }
 
-        // Perform the check-out operation
+
         String sql = "INSERT INTO person_movies (person_id, movie_id, checkout_date) VALUES (?, ?, CURRENT_DATE)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, personId);
@@ -535,6 +549,8 @@ public class Main {
             while (rs.next()) {
                 System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") + ", Name: " + rs.getString("name") + ", Price: " + rs.getInt("price"));
             }
+        } catch(SQLException e) {
+            System.out.println("ERROR");
         }
     }
 
