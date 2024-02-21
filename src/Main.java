@@ -538,7 +538,7 @@ public class Main {
                 System.out.println("No people found.");
             } else {
                 while (rs.next()) {
-                    System.out.println("ID: " + rs.getInt("id") + ", First Name: " + rs.getString("firstname") + ", Last Name: " + rs.getString("lastname"));
+                    System.out.println("ID: " + rs.getInt("id") + ", First Name: " + rs.getString("firstname") + ", Last Name: " + rs.getString("lastname" ) + ", Phone Number: " + rs.getString("phonenumber" ));
                 }
             }
         }
