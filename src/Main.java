@@ -40,7 +40,8 @@ public class Main {
     private static void searchAction(Scanner scanner, Connection connection) throws SQLException {
         String action = "";
         System.out.print("Would you like to search [B]ooks, [M]ovies, or [P]eople?> ");
-        action = scanner.nextLine();
+        action = scanner.next();
+        scanner.nextLine();
         if (action.equalsIgnoreCase("B")){
             System.out.print("Enter search keyword: ");
             String keyword = scanner.nextLine();
@@ -107,7 +108,8 @@ public class Main {
 
     private static void addAction(Scanner scanner, Connection connection) throws SQLException {
         System.out.print("[P]erson, [B]ook, or [M]ovie?> ");
-        String action = scanner.nextLine();
+        String action = scanner.next();
+        scanner.nextLine();
         if (action.equalsIgnoreCase("P")) {
             System.out.print("Enter First Name> ");
             String firstname = scanner.nextLine();
@@ -140,7 +142,8 @@ public class Main {
 
     private static void deleteAction(Scanner scanner, Connection connection) throws SQLException {
         System.out.print("[P]erson, [B]ook, or [M]ovie?> ");
-        String action = scanner.nextLine();
+        String action = scanner.next();
+        scanner.nextLine();
         if (action.equalsIgnoreCase("P")) {
             System.out.print("Enter Person ID to delete> ");
             int personId = getIntInput(scanner);
@@ -478,6 +481,7 @@ public class Main {
     private static void view(Connection connection, Scanner scanner) throws SQLException {
         System.out.println("[P]erson, [B]ooks, [M]ovies, Available Books [ab], Available Movies [am] Checked Out Books [cb], or Checked Out Movies [cm]> ");
         String action = scanner.next();
+        scanner.nextLine();
         if (action.equalsIgnoreCase("P")) {
             viewAllPerson(connection);
         } else if (action.equalsIgnoreCase("B")) {
