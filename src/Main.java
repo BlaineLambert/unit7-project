@@ -13,23 +13,21 @@ public class Main {
             if (connection != null) {
                 String action = "";
                 while (!action.equalsIgnoreCase("quit")) {
-
+                    scanner.nextLine(); //i hate this
                     System.out.print("[V]iew, [A]dd, [D]elete, Check [I]n, Check [O]ut, or [S]earch> ");
                     action = scanner.nextLine();
                     if (action.equalsIgnoreCase("A")) {
                         addAction(scanner, connection);
-                    } else if (action.equalsIgnoreCase("D")) {
+                    } if (action.equalsIgnoreCase("D")) {
                         deleteAction(scanner, connection);
-                    } else if (action.equalsIgnoreCase("I")) {
+                    } if (action.equalsIgnoreCase("I")) {
                         checkInAction(scanner, connection);
-                    } else if (action.equalsIgnoreCase("O")) {
+                    } if (action.equalsIgnoreCase("O")) {
                         checkOutAction(scanner, connection);
-                    } else if (action.equalsIgnoreCase("V")) {
+                    } if (action.equalsIgnoreCase("V")) {
                         view(connection, scanner);
-                    } else if (action.equalsIgnoreCase("S")) {
+                    } if (action.equalsIgnoreCase("S")) {
                         searchAction(scanner, connection);
-                    } else {
-                        System.out.println(action + " " + "is a invalid option");
                     }
                 }
             } else {
@@ -552,6 +550,8 @@ public class Main {
             while (rs.next()) {
                 System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") + ", Name: " + rs.getString("name") + ", Price: " + rs.getInt("price"));
             }
+        } catch(SQLException e) {
+            System.out.println("ERROR");
         }
     }
 
