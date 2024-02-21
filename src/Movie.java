@@ -1,11 +1,13 @@
 public class Movie {
     private String name;
     private String director;
+    private String genre;
     private double price;
 
-    public Movie(String name, String director, double price) {
+    public Movie(String name, String director, String genre, double price) {
         this.name = name;
         this.director = director;
+        this.genre = genre;
         this.price = price;
     }
 
@@ -24,10 +26,15 @@ public class Movie {
     public void setDirector(String director) {
         this.director = director;
     }
-
-    public double getPrice() {
-        return price;
+    public String getGenre() {
+        return genre;
     }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public double getPrice() { return price; }
 
     public void setPrice(double price) {
         this.price = price;
@@ -38,6 +45,7 @@ public class Movie {
         return "Movie{" +
                 "name='" + name + '\'' +
                 ", director='" + director + '\'' +
+                ", genre='" + genre + '\'' +
                 ", price=" + price +
                 '}';
     }

@@ -1,11 +1,13 @@
 public class Book {
     private String name;
     private String author;
+    private String genre;
     private double price;
 
-    public Book(String name, String author, double price) {
+    public Book(String name, String author, String genre, double price) {
         this.name = name;
         this.author = author;
+        this.genre = genre; // Initialize genre in the constructor
         this.price = price;
     }
 
@@ -25,11 +27,19 @@ public class Book {
         this.author = author;
     }
 
-    public double getPrice() { // Getter for price
+    public String getGenre() { // Getter for genre
+        return genre;
+    }
+
+    public void setGenre(String genre) { // Setter for genre
+        this.genre = genre;
+    }
+
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) { // Setter for price
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -38,6 +48,7 @@ public class Book {
         return "Book{" +
                 "name='" + name + '\'' +
                 ", author='" + author + '\'' +
+                ", genre='" + genre + '\'' +
                 ", price=" + price +
                 '}';
     }

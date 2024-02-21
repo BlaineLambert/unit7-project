@@ -64,18 +64,25 @@ public class Main {
     }
 
     private static void searchBooks(Connection connection, String keyword) throws SQLException {
-        String sql = "SELECT * FROM book WHERE name LIKE ? OR author LIKE ?";
+        String sql = "SELECT * FROM book WHERE name LIKE ? OR author LIKE ? OR genre LIKE ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, "%" + keyword + "%");
             pstmt.setString(2, "%" + keyword + "%");
+            pstmt.setString(3, "%" + keyword + "%");
             ResultSet rs = pstmt.executeQuery();
             System.out.println("Books matching the search:");
-            while (rs.next()) {
-                System.out.println("ID: " + rs.getInt("id") + ", Author: " + rs.getString("author") +
-                        ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
+            if (!rs.isBeforeFirst()) {
+                System.out.println("No books matching the search.");
+            } else {
+                while (rs.next()) { //added genre to conners code
+                    System.out.println("ID: " + rs.getInt("id") + ", Author: " + rs.getString("author") +
+                            ", Name: " + rs.getString("name") + ", Genre: " + rs.getString("genre") + // Display genre
+                            ", Price: $" + String.format("%.2f", rs.getDouble("price")));
+                }
             }
         }
     }
+
 
     private static void searchPeople(Connection connection, String keyword) throws SQLException {
         String sql = "SELECT * FROM person WHERE firstname LIKE ? OR lastname LIKE ? OR phonenumber LIKE ?";
@@ -93,15 +100,21 @@ public class Main {
     }
 
     private static void searchMovies(Connection connection, String keyword) throws SQLException {
-        String sql = "SELECT * FROM movie WHERE name LIKE ? OR director LIKE ?";
+        String sql = "SELECT * FROM movie WHERE name LIKE ? OR director LIKE ? OR genre LIKE ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, "%" + keyword + "%");
             pstmt.setString(2, "%" + keyword + "%");
+            pstmt.setString(3, "%" + keyword + "%");
             ResultSet rs = pstmt.executeQuery();
             System.out.println("Movies matching the search:");
-            while (rs.next()) {
-                System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") +
-                        ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
+            if (!rs.isBeforeFirst()) {
+                System.out.println("No movies matching the search.");
+            } else {
+                while (rs.next()) {
+                    System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") +
+                            ", Name: " + rs.getString("name") + ", Genre: " + rs.getString("genre") + // Display genre
+                            ", Price: $" + String.format("%.2f", rs.getDouble("price")));
+                }
             }
         }
     }
@@ -123,17 +136,21 @@ public class Main {
             String author = scanner.nextLine();
             System.out.print("Enter Book Name> ");
             String name = scanner.nextLine();
+            System.out.print("Enter Genre> ");
+            String genre = scanner.nextLine();
             System.out.print("Enter Price> ");
             double price = scanner.nextDouble();
-            insertBook(connection, author, name, price);
+            insertBook(connection, author, name, genre, price);
         } else if (action.equalsIgnoreCase("M")) {
             System.out.print("Enter Director Name> ");
             String director = scanner.nextLine();
             System.out.print("Enter Movie Name> ");
             String name = scanner.nextLine();
+            System.out.print("Enter Genre> ");
+            String genre = scanner.nextLine();
             System.out.print("Enter Price> ");
             double price = scanner.nextDouble();
-            insertMovie(connection, director, name, price);
+            insertMovie(connection, director, name, genre, price);
         } else {
             System.out.println("Invalid option. Please choose again.");
         }
@@ -201,12 +218,13 @@ public class Main {
     }
 
 
-    public static int insertMovie(Connection connection, String director, String name, double price) throws SQLException {
-        String sql = "INSERT INTO movie(director, name, price) VALUES(?, ?, ?)";
+    public static int insertMovie(Connection connection, String director, String name, String genre, double price) throws SQLException {
+        String sql = "INSERT INTO movie(director, name, genre, price) VALUES(?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, director);
             pstmt.setString(2, name);
-            pstmt.setDouble(3, price);
+            pstmt.setString(3, genre);
+            pstmt.setDouble(4, price);
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -224,12 +242,13 @@ public class Main {
     }
 
 
-    public static int insertBook(Connection connection, String author, String name, double price) throws SQLException {
-        String sql = "INSERT INTO book(author, name, price) VALUES(?, ?, ?)";
+    public static int insertBook(Connection connection, String author, String name, String genre, double price) throws SQLException {
+        String sql = "INSERT INTO book(author, name, genre, price) VALUES(?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, author);
             pstmt.setString(2, name);
-            pstmt.setDouble(3, price);
+            pstmt.setString(3, genre);
+            pstmt.setDouble(4, price);
             int insertedRow = pstmt.executeUpdate();
             if (insertedRow > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -519,7 +538,7 @@ public class Main {
             System.out.println("Available Books:");
             while (rs.next()) {
                 System.out.println("ID: " + rs.getInt("id") + ", Author: " + rs.getString("author") +
-                        ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
+                        ", Name: " + rs.getString("name") + ", Price: $" + String.format("%.2f", rs.getDouble("price")));
             }
         }
     }
@@ -531,7 +550,7 @@ public class Main {
             System.out.println("Available Movies:");
             while (rs.next()) {
                 System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") +
-                        ", Name: " + rs.getString("name") + ", Price: " + rs.getDouble("price"));
+                        ", Name: " + rs.getString("name") + ", Price: $" + String.format("%.2f", rs.getDouble("price")));
             }
         }
     }
@@ -541,7 +560,7 @@ public class Main {
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                System.out.println("ID: " + rs.getInt("id") + ", Author: " + rs.getString("author") + ", Name: " + rs.getString("name") + ", Price: " + rs.getInt("price"));
+                System.out.println("ID: " + rs.getInt("id") + ", Author: " + rs.getString("author") + ", Name: " + rs.getString("name") + ", Price: $" + String.format("%.2f", rs.getDouble("price")));
             }
         }
     }
@@ -551,7 +570,7 @@ public class Main {
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") + ", Name: " + rs.getString("name") + ", Price: " + rs.getInt("price"));
+                System.out.println("ID: " + rs.getInt("id") + ", Director: " + rs.getString("director") + ", Name: " + rs.getString("name") + ", Price: $" + String.format("%.2f", rs.getDouble("price")));
             }
         } catch(SQLException e) {
             System.out.println("ERROR");
